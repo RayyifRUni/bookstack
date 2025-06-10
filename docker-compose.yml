@@ -9,11 +9,12 @@ services:
       - PUID=${PUID}
       - PGID=${PGID}
       - APP_URL=${APP_URL}
-      - DB_HOST=bookstack_db:${DB_PORT}
+      - DB_HOST=bookstack_db
       - DB_DATABASE=${DB_DATABASE}
       - DB_USERNAME=${DB_USER}
       - DB_PASSWORD=${DB_PASSWORD}
       - APP_KEY=${APP_KEY}
+      - REGISTRATION_ENABLED=true
 
     volumes:
       - app_config:/config
@@ -40,6 +41,19 @@ services:
     networks:
       - bookstack_network
     restart: unless-stopped
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      - PMA_HOST=bookstack_db
+      - PMA_PORT=${DB_PORT}
+    ports:
+      - "8080:80"
+    depends_on:
+      - bookstack_db
+    networks:
+      - bookstack_network
 
 volumes:
   app_config:
